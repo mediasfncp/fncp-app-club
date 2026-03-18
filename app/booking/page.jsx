@@ -1,36 +1,46 @@
 "use client"
 import { useState } from "react"
 
-export default function Booking(){
+export default function Booking() {
 
- const [selected,setSelected] = useState(null)
+  const [selected,setSelected] = useState(null)
 
- const slots = [
-  {time:"09:00",places:2},
-  {time:"09:30",places:1},
-  {time:"10:00",places:0}
- ]
+  const slots = ["09:00","09:30","10:00"]
 
- return(
-  <div className="container-mobile">
+  async function pay(){
 
-   <h2>Choisir un créneau</h2>
+    await fetch("/api/stripe",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        heure:selected,
+        nom:"Test",
+        enfant:"Enfant",
+        email:"test@test.com",
+        tel:"0600000000",
+        pack:"1"
+      })
+    })
+  }
 
-   {slots.map(s=>(
-    <div
-     key={s.time}
-     className="card"
-     onClick={()=>setSelected(s.time)}
-     style={{
-      border:selected===s.time?"2px solid #00CCCC":"none"
-     }}
-    >
-     <b>{s.time}</b> - {s.places>0 ? `${s.places} places` : "COMPLET"}
+  return (
+    <div style={{padding:20}}>
+      <h2>Choisir un créneau</h2>
+
+      {slots.map(s=>(
+        <div key={s}
+          onClick={()=>setSelected(s)}
+          style={{
+            padding:10,
+            margin:5,
+            background:"#eee",
+            cursor:"pointer"
+          }}>
+          {s}
+        </div>
+      ))}
+
+      <button onClick={pay}>Payer</button>
     </div>
-   ))}
-
-   <button className="btn">Payer</button>
-
-  </div>
- )
+  )
 }
